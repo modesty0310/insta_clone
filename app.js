@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const  mongoose  = require('mongoose');
+const passport = require('passport');
+const passportConfig = require('./passport');
 require('dotenv').config();
 
 const app = express();
@@ -23,11 +25,12 @@ mongoose.connect(process.env.DB_URI,{
 // 미들웨어 연결
 app.use(express.static(path.join(__dirname,'public')));
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
+app.use(passport.initialize());
+passportConfig();
 
 // 라우터
-app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 
 // 에러처리 미들웨어
