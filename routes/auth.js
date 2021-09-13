@@ -9,7 +9,6 @@ const router = express.Router();
 
 router.post('/join', async (req, res, next) => {
   const {email, password, chk_password, name, birth, gender, phoneNumber} = req.body;
-  console.log(req.body);
   try {
     const user = await User.findOne({email});
     if(user){
@@ -47,8 +46,6 @@ router.post('/login', async (req,res,next) => {
       })
 
       const token = jwt.sign({id:user.email, name: user.name}, process.env.JWT_SECRET);
-      console.log(req.headers);
-      console.log(req.authorization);
       res.json({token, message:"로그인성공"})
     })(req,res,next)
 });
