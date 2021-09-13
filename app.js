@@ -7,8 +7,8 @@ const passportConfig = require('./passport');
 require('dotenv').config();
 
 const app = express();
+passportConfig();
 app.set('port', process.env.PORT || 5000);
-app.set('views', path.join(__dirname, 'views'));
 
 // DB연결
 mongoose.connect(process.env.DB_URI,{
@@ -28,7 +28,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(passport.initialize());
-passportConfig();
+app.use(passport.session());
+
 
 // 라우터
 app.use('/auth', require('./routes/auth'));
@@ -43,9 +44,7 @@ app.use(function(req,res,next) {
 app.use(function(err,req,res,next) {
   res.locals.message = err.message;
   res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  res.status(err.status || 500).json({message : err.message});
 });
 
 app.listen(app.get('port'), () => {console.log(`${app.get('port')} 연결`)});

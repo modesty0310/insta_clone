@@ -3,6 +3,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ router.post('/join', async (req, res, next) => {
       return res.status(400).json({message: "이미 존재하는 아이디 입니다."});
     }
     if(password !== chk_password) {
-      return res.status(500).json({message: "비밀번호가 일치하지 않습니다."})
+      return res.status(400).json({message: "비밀번호가 일치하지 않습니다."})
     }
     const hash = await bcrypt.hash(password, 12);
     await User.create({
@@ -34,27 +35,20 @@ router.post('/join', async (req, res, next) => {
 })
 
 router.post('/login', async (req,res,next) => {
-  try {
     passport.authenticate('local', (passportError, user, info) => {
       if(passportError || !user) {
-        res.status(500).json({message : info.reason});
-        return;
+        res.status(500).json({message : info.message});
       }
 
       req.login(user, {session: false}, loginError => {
         if(loginError){
-          res.send(loginError);
-          return;
+          res.status(500).json({message : loginError});
         }
       })
 
       const token = jwt.sign({id:user.email, name: user.name}, process.env.JWT_SECRET);
-      res.json({token})
-    })(req,res)
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
+      res.json({token, message:"로그인성공"})
+    })(req,res,next)
 });
 
 module.exports = router;
