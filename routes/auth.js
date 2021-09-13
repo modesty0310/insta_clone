@@ -37,12 +37,12 @@ router.post('/join', async (req, res, next) => {
 router.post('/login', async (req,res,next) => {
     passport.authenticate('local', (passportError, user, info) => {
       if(passportError || !user) {
-        res.status(500).json({message : info.message});
+        return res.status(500).json({message : info.message});
       }
 
       req.login(user, {session: false}, loginError => {
         if(loginError){
-          res.status(500).json({message : loginError});
+          return res.status(500).json({message : loginError});
         }
       })
 

@@ -33,6 +33,7 @@ app.use(passport.session());
 
 // 라우터
 app.use('/auth', require('./routes/auth'));
+app.use('/profile', require('./routes/profile'));
 
 // 에러처리 미들웨어
 app.use(function(req,res,next) {
