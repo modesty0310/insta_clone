@@ -1,20 +1,16 @@
 const express = require('express');
 const passport = require('passport');
-const User = require('../models/User');
 
 require('dotenv').config();
 
 const router = express.Router();
-router.get('/',async (req,res,next) => {
-  passport.authenticate('jwt',(err, user) => {
-    if(user) {
-      User.findOne({email: user.email})
-        .then(result => res.json({result}))
-        .catch(err => err);
-        return;
-    }
-    return res.json({message: "인증되지 않은 사용자"});
-  })(req, res, next)
+router.get('/', async (req, res) => {
+  passport.authenticate('jwt', { session: false },(err, user) => {
+  if(user) {
+    return res.json({ result: true, user });
+  }
+  return res.json({mesage: "잘못된 인증정보"})
+  })(req, res)
 });
 
 module.exports = router;

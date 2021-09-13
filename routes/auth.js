@@ -47,8 +47,15 @@ router.post('/login', async (req,res,next) => {
       })
 
       const token = jwt.sign({id:user.email, name: user.name}, process.env.JWT_SECRET);
+      console.log(req.headers);
+      console.log(req.authorization);
       res.json({token, message:"로그인성공"})
     })(req,res,next)
 });
+
+router.get('/logout', async(req, res, next) => {
+  req.logout();
+  req.session.destroy();
+})
 
 module.exports = router;

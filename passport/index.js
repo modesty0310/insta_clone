@@ -35,13 +35,13 @@ const passportVerify = async (email, password, done) => {
 };
 
 const JWTConfig = {
-  jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.JWT_SECRET,
 };
 
 const JWTVerify = async (jwtPayload, done) => {
   try {
-    const user = await User.findOne({email:jwtPayload.email});
+    const user = await User.findOne({email:jwtPayload.id});
 
     if(user) {
       return done(null, user);
